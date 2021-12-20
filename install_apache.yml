@@ -1,14 +1,31 @@
 ---
 - hosts: all
-  become: ture
-  tasks:
-  
-  - name: install apache2 package
+  become: 
+  pre_tasks:
+
+  - name: install update on ubuntu
     apt:
-      name: apache2
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: web_server
+  become: 
+  tasks:
+
+  - name: install apache2 and php package
+    apt:
+      name: 
+        - apache2
+        - libapache2-mod-php
       state: present
   
- - name: starting apache2 service
-      service:
+  - name: instal mariadb package
+    apt:
+        name: mariadb-server
+        state: present
+    when: ansible_distribution == "Ubuntu"
+
+  - name: starting apache2 service
+    service:
       name: apache2
-      state: start
+      state: restarted
